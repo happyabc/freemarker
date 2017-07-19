@@ -9,11 +9,6 @@ import cn.weeho.freemarker.entities.Article;
  * 文章业务类（模拟）
  */
 public class ArticleService {
-
-    static {
-
-    }
-
     /**
      * 所有的文章
      */

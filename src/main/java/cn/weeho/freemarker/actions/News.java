@@ -1,24 +1,20 @@
 package cn.weeho.freemarker.actions;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import cn.weeho.freemarker.Services.ArticleService;
 import cn.weeho.freemarker.entities.Article;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 新闻列表
@@ -27,7 +23,7 @@ import freemarker.template.TemplateException;
 public class News extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    ArticleService articleService = new ArticleService();
+
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -39,8 +35,12 @@ public class News extends HttpServlet {
 
         // 文件是否存在
         File file = new File(indexPath);
-        file.delete();//删掉原有的
-        if (!file.exists()) {
+        boolean result=   file.delete();//删掉原有的File.separator
+        //创建子目录
+        File news= new File(indexPath.substring(0,indexPath.lastIndexOf(File.separator))+File.separator+"news");
+        if (!news.exists()) {
+            news.mkdir();
+        }
             // 如果新闻列表不存在，生成新闻列表
 
             // 创建一个freemarker.template.Configuration实例，它是存储 FreeMarker
@@ -55,6 +55,7 @@ public class News extends HttpServlet {
             cfg.setDefaultEncoding("UTF-8");
 
             // 数据
+            ArticleService articleService = new ArticleService();
             Map<String, Object> articleData = new HashMap<>();
             List<Article> articles = articleService.getArticles();
             articleData.put("articles", articles);
@@ -86,7 +87,7 @@ public class News extends HttpServlet {
             } catch (TemplateException e) {
                 e.printStackTrace();
             }
-        }
+//        }
         // 如果新闻单页下存在，生成新闻单页
         request.getRequestDispatcher("index.html").forward(request, response);
     }

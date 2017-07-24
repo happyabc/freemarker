@@ -11,7 +11,7 @@ ${test?upper_case?html}
 ${tom!"tom is missed"}
 <#if !jack??>jack is missed</#if>
 
-<#assign age=23>
+<#assign age=30>
 <#if (age>60)>老年人
 <#elseif (age>40)>中年人
 <#elseif (age>20)>青年人

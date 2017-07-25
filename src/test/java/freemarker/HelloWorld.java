@@ -1,14 +1,13 @@
-package cn.weeho.freemarker.demo;
+package freemarker;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
 
 public class HelloWorld {
 
@@ -17,8 +16,8 @@ public class HelloWorld {
 		// 创建一个freemarker.template.Configuration实例，它是存储 FreeMarker 应用级设置的核心部分
 		// 指定版本号
 		Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
-		// 设置模板目录
-		cfg.setDirectoryForTemplateLoading(new File("src/main/java/templates"));
+		// 设置模板目录        
+		cfg.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
 		// 设置默认编码格式
 		cfg.setDefaultEncoding("UTF-8");
 

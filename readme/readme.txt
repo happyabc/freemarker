@@ -12,3 +12,5 @@ http://www.cnblogs.com/best/p/5681511.html
 
 3：数据库相关
   创建transfer数据，导入tb_article.sql脚本
+
+4: 开发的过程中请切换至Dev分支。

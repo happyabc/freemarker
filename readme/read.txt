@@ -1,7 +1,0 @@
-1:访问地址
-	http://localhost:8080/freemarker/news
-调试路径：（本机）
-  F:\Work\workspace-sts-3.8.4.RELEASE\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\freemarker
-  
-2：参考资料
-http://www.cnblogs.com/best/p/5681511.html

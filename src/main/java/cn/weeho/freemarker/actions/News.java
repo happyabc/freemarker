@@ -23,8 +23,6 @@ import java.util.Map;
 public class News extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         // 设置编码格式与MIME类型
@@ -35,59 +33,54 @@ public class News extends HttpServlet {
 
         // 文件是否存在
         File file = new File(indexPath);
-        boolean result=   file.delete();//删掉原有的File.separator
         //创建子目录
-        File news= new File(indexPath.substring(0,indexPath.lastIndexOf(File.separator))+File.separator+"news");
+        File news = new File(indexPath.substring(0, indexPath.lastIndexOf(File.separator)) + File.separator + "news");
         if (!news.exists()) {
             news.mkdir();
         }
-            // 如果新闻列表不存在，生成新闻列表
+        // 创建一个freemarker.template.Configuration实例，它是存储 FreeMarker
+        // 应用级设置的核心部分
+        // 指定版本号
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
+        // 获得模板文件路径
+        String templatePath = this.getClass().getClassLoader().getResource("templates").getPath();
+        // 设置模板目录
+        cfg.setDirectoryForTemplateLoading(new File(templatePath));
+        // 设置默认编码格式
+        cfg.setDefaultEncoding("UTF-8");
 
-            // 创建一个freemarker.template.Configuration实例，它是存储 FreeMarker
-            // 应用级设置的核心部分
-            // 指定版本号
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
-            // 获得模板文件路径
-            String templatePath = this.getClass().getClassLoader().getResource("templates").getPath();
-            // 设置模板目录
-            cfg.setDirectoryForTemplateLoading(new File(templatePath));
-            // 设置默认编码格式
-            cfg.setDefaultEncoding("UTF-8");
+        // 数据
+        ArticleService articleService = new ArticleService();
+        Map<String, Object> articleData = new HashMap<>();
+        List<Article> articles = articleService.getArticles();
+        articleData.put("articles", articles);
 
-            // 数据
-            ArticleService articleService = new ArticleService();
-            Map<String, Object> articleData = new HashMap<>();
-            List<Article> articles = articleService.getArticles();
-            articleData.put("articles", articles);
+        // 从设置的目录中获得模板
+        Template template = cfg.getTemplate("newsList.ftl");
 
-            // 从设置的目录中获得模板
-            Template template = cfg.getTemplate("newsList.ftl");
-
-            // 合并模板和数据模型
-            try {
-                // 将数据与模板渲染的结果写入文件中
-                Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+        // 合并模板和数据模型
+        try {
+            // 将数据与模板渲染的结果写入文件中
+            Writer writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+            template.process(articleData, writer);
+            writer.flush();
+            articleData.clear();
+            template = cfg.getTemplate("news.ftl");
+            // 生成单个新闻文件
+            for (Article article : articles) {
+                articleData.put("article", article);
+                // 单个新闻文件
+                file = new File(request.getServletContext().getRealPath("/news/" + article.getId() + ".html"));
+                // 文件输出流写入器
+                writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+                // 将模板+数据生成的结果写入文件中，得到一个静态文件
                 template.process(articleData, writer);
                 writer.flush();
-
-                articleData.clear();
-                template = cfg.getTemplate("news.ftl");
-                // 生成单个新闻文件
-                for (Article article : articles) {
-                    articleData.put("article", article);
-                    // 单个新闻文件
-                    file = new File(request.getServletContext().getRealPath("/news/" + article.getId() + ".html"));
-                    // 文件输出流写入器
-                    writer = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-                    // 将模板+数据生成的结果写入文件中，得到一个静态文件
-                    template.process(articleData, writer);
-                    writer.flush();
-                }
-                writer.close();
-            } catch (TemplateException e) {
-                e.printStackTrace();
             }
-//        }
+            writer.close();
+        } catch (TemplateException e) {
+            e.printStackTrace();
+        }
         // 如果新闻单页下存在，生成新闻单页
         request.getRequestDispatcher("index.html").forward(request, response);
     }

@@ -50,6 +50,8 @@ public class MyBatisTest {
         SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
         // 2、获取sqlSession对象
         SqlSession openSession = sqlSessionFactory.openSession();
+        sqlSessionFactory.openSession();
+
         try {
             // 3、获取接口的实现类对象
             //会为接口自动的创建一个代理对象，代理对象去执行增删改查方法

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,11 +52,18 @@ public class JavaGenerate {
             // 数据
             ArticleService articleService = new ArticleService();
             Map<String, Object> articleData = new HashMap<>();
-            List<Article> articles = articleService.getArticles();
+            List<Article> articles = articleService.getArticlesByMyBatis();
+            List<String> userNameList = new ArrayList<String>();
+            userNameList.add(0, "孙大圣");
+            userNameList.add(1, "猪八戒");
+            userNameList.add(2, "唐凡凡");
+            userNameList.add(3, "沙晶晶");
+
             articleData.put("articles", articles);
+            articleData.put("userNames", userNameList);
 
             // 从设置的目录中获得模板
-            Template template = cfg.getTemplate("newsList.ftl");
+            Template template = cfg.getTemplate("newsList2.ftl");
 
             // 合并模板和数据模型
             try {
@@ -65,6 +73,8 @@ public class JavaGenerate {
                 template.process(articleData, writer);
                 writer.flush();
                 articleData.clear();
+
+
                 //2:生成新闻详情
                 template = cfg.getTemplate("news.ftl");
                 // 生成单个新闻文件
@@ -84,4 +94,42 @@ public class JavaGenerate {
             }
         }
     }
+
+    /**
+     * 生成主页测试
+     *
+     * @throws Exception
+     */
+    @Test
+    public void generateIndex() throws Exception {
+        {
+            // 设置编码格式与MIME类型
+            String basePath = "F:/freemarker/";
+            // 首页新闻列表路径
+            String indexPath = basePath + "index.html";
+
+            // 文件是否存在
+            File file = new File(indexPath);
+
+            // 数据
+            ArticleService articleService = new ArticleService();
+            Map<String, Object> articleData = new HashMap<>();
+            List<Article> articles = new ArrayList<>();
+//            articles = articleService.getArticlesByMyBatis();
+            articles = articleService.getArticles();
+            List<String> userNameList = new ArrayList<String>();
+            userNameList.add(0, "孙大圣");
+            userNameList.add(1, "猪八戒");
+            userNameList.add(2, "唐凡凡");
+            userNameList.add(3, "沙晶晶");
+
+            articleData.put("articles", articles);
+            articleData.put("userNames", userNameList);
+            String templatePath = this.getClass().getClassLoader().getResource("templates").getPath();
+            String templateName = "newsList2.ftl";
+            FreeMarkerUtils.generateHtml(file, articleData, templatePath, templateName);
+        }
+    }
+
+
 }

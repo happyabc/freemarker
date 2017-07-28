@@ -52,7 +52,7 @@ public class News extends HttpServlet {
         // 数据
         ArticleService articleService = new ArticleService();
         Map<String, Object> articleData = new HashMap<>();
-        List<Article> articles = articleService.getArticles();
+        List<Article> articles = articleService.getArticlesByMyBatis();
         articleData.put("articles", articles);
 
         // 从设置的目录中获得模板
